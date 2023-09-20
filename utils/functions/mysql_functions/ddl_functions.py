@@ -9,7 +9,6 @@ import mysql.connector
 import os
 import logging
 from dotenv import load_dotenv
-from simple_term_menu import TerminalMenu
 from time import sleep
 
 import sys
@@ -42,6 +41,31 @@ def select_database() -> str:
     return db_name
 
 
+def select_table(
+    database : str
+) -> str:
+
+    print("\n")
+
+    db = mysql.connector.connect(
+        host = "127.0.0.1",
+        user = "root",
+        password = os.getenv("MYSQL_ROOT_PASS"),
+        database = database
+    )
+
+    cursor = db.cursor()
+
+    open_file = open(f'{os.path.dirname(__file__)}/queries/show_tables.sql', 'r')
+    query_str = open_file.read()
+    cursor.execute(query_str)
+        
+    tables_options = list(map(lambda x: (x)[0], cursor))
+
+    table_name = select_terminal_menu_option(tables_options)
+
+    return table_name
+
 
 def create_drop_database():
 
@@ -58,8 +82,6 @@ def create_drop_database():
         password = os.getenv("MYSQL_ROOT_PASS")
     )
 
-    logging.info('Connecting to Database...\n')
-
     sleep(1)
 
     cursor = db.cursor()
@@ -75,8 +97,6 @@ def create_drop_database():
     query_str = open_file.read()
     format_query_str = query_str.format(db_name = db_name)
 
-    sleep(1)
-
     logging.info(f'Creating {db_name} Database...' if action_re_txt == 'create_database' else f'Dropping {db_name} Database...')
 
     cursor.execute(format_query_str)
@@ -87,7 +107,8 @@ def create_drop_database():
     
     return 200
 
-def create_drop_truncate_table():
+
+def create_truncate_drop_table():
 
     print("\n")
 
@@ -96,16 +117,27 @@ def create_drop_truncate_table():
 
     print("\n")
 
+    database = select_database()
+
     db = mysql.connector.connect(
         host = "127.0.0.1",
         user = "root",
-        password = os.getenv("MYSQL_ROOT_PASS")
+        password = os.getenv("MYSQL_ROOT_PASS"),
+        database = database
     )
 
-    logging.info('Connecting to Database...\n')
+    cursor = db.cursor()
+
+    open_file = open(f'{rel_path}/queries/{action_re_txt}.sql', 'r')
+    query_str = open_file.read()
+    format_query_str = query_str.format(table_name = select_table(database = database))
+
+    print("\n")
+
+    print(format_query_str)
 
     sleep(1)
 
-    cursor = db.cursor()
+    #cursor.execute(format_query_str)
     
     return 200
