@@ -88,22 +88,26 @@ def create_drop_database():
 
     if action_re_txt == 'create_database':
         db_name = input("Select Database Name: ")
+        attempt_msg = f'Creating {db_name} Database...'
+        successfull_msg = f'Database {db_name} Created Successfully\n'
         print("\n")
     else:
         db_name = select_database()
+        attempt_msg = f'Dropping {db_name} Database...'
+        successfull_msg = f'Database {db_name} Dropped Successfully\n'
         print("\n")
 
     open_file = open(f'{rel_path}/queries/{action_re_txt}.sql', 'r')
     query_str = open_file.read()
     format_query_str = query_str.format(db_name = db_name)
 
-    logging.info(f'Creating {db_name} Database...' if action_re_txt == 'create_database' else f'Dropping {db_name} Database...')
+    logging.info(attempt_msg)
 
     cursor.execute(format_query_str)
 
     sleep(1)
 
-    logging.info(f'Database {db_name} Created Successfully\n' if action_re_txt == 'create_database' else f'Database {db_name} Dropped Successfully\n')
+    logging.info(successfull_msg)
     
     return 200
 
@@ -136,6 +140,7 @@ def create_truncate_drop_table():
 
     if action_re_txt == 'create_table':
         table_name = input("Select Table Name: ")
+        attempt_msg = f'Creating Table {table_name} In {database} Database'
         columns_config = ''
         while(True):
             print("\n")
@@ -158,14 +163,23 @@ def create_truncate_drop_table():
             columns_config += f"{column_name} {column_data_type},\n"
         format_query_str = query_str.format(table_name = table_name, columns_config = columns_config)
     else:
-        format_query_str = query_str.format(table_name = select_table(database = database))
+        table_name = select_table(database = database)
+        format_query_str = query_str.format(table_name = table_name)
+        if action_re_txt == 'drop_table':
+            attempt_msg = f'Dropping Table {table_name} From {database} Database'
+            successfull_msg = f'Table {table_name} Dropped Successfully'
+        else:
+            attempt_msg = f'Truncating Table {table_name} From {database} Database'
+            successfull_msg = f'Table {table_name} Truncated Successfully'
 
     print("\n")
 
-    print(format_query_str)
+    logging.info(attempt_msg)
+
+    cursor.execute(format_query_str)
 
     sleep(1)
 
-    cursor.execute(format_query_str)
+    logging.info(successfull_msg)
     
     return 200
