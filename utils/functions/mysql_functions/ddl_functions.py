@@ -8,7 +8,6 @@
 import mysql.connector
 import os
 import logging
-from dotenv import load_dotenv
 from time import sleep
 
 import sys
@@ -20,8 +19,6 @@ from general_functions import select_terminal_menu_option, add_config_database
 
 sys.path.insert(1, f'{rel_path}/../../configs')
 from general_configs import ddbb_config
-
-load_dotenv()
 
 def select_database() -> str:
 
