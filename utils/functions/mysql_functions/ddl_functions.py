@@ -14,19 +14,18 @@ from time import sleep
 import sys
 
 rel_path = os.path.dirname(__file__)
-sys.path.insert(0, f'{rel_path}/../general_functions')
 
-from general_functions import select_terminal_menu_option
+sys.path.insert(0, f'{rel_path}/../general_functions')
+from general_functions import select_terminal_menu_option, add_config_database
+
+sys.path.insert(1, f'{rel_path}/../../configs')
+from general_configs import ddbb_config
 
 load_dotenv()
 
 def select_database() -> str:
 
-    db = mysql.connector.connect(
-        host = "127.0.0.1",
-        user = "root",
-        password = os.getenv("MYSQL_ROOT_PASS")
-    )
+    db = mysql.connector.connect(** ddbb_config)
 
     cursor = db.cursor()
 
@@ -47,11 +46,12 @@ def select_table(
 
     print("\n")
 
-    db = mysql.connector.connect(
-        host = "127.0.0.1",
-        user = "root",
-        password = os.getenv("MYSQL_ROOT_PASS"),
-        database = database
+    db = mysql.connector.connect(** 
+        add_config_database(
+            config = ddbb_config, 
+            key = "database", 
+            value = database
+        )
     )
 
     cursor = db.cursor()
@@ -76,11 +76,7 @@ def create_drop_database():
 
     print("\n")
 
-    db = mysql.connector.connect(
-        host = "127.0.0.1",
-        user = "root",
-        password = os.getenv("MYSQL_ROOT_PASS")
-    )
+    db = mysql.connector.connect(** ddbb_config)
 
     sleep(1)
 
@@ -124,11 +120,12 @@ def create_truncate_drop_table():
     print("Select Database...\n")
     database = select_database()
 
-    db = mysql.connector.connect(
-        host = "127.0.0.1",
-        user = "root",
-        password = os.getenv("MYSQL_ROOT_PASS"),
-        database = database
+    db = mysql.connector.connect(** 
+        add_config_database(
+            config = ddbb_config, 
+            key = "database", 
+            value = database
+        )
     )
 
     cursor = db.cursor()
