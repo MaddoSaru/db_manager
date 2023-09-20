@@ -15,7 +15,7 @@ def main():
             create_drop_database()
         elif app_action == 'Exit':
             print('\n')
-            logging.info('Thanks for using MaddoSaru database manager uwu\n')
+            logging.info('Thanks for using MaddoSaru database manager uwu!\n')
             break
 
 if __name__ == "__main__":
