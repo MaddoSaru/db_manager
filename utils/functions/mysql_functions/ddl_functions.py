@@ -1,8 +1,8 @@
 # CREATE DATABASE (CHECK)
 # DROP DATABASE (CHECK)
-# CREATE TABLE
-# DROP TABLE
-# TRUNCATE TABLE
+# CREATE TABLE (CHECK)
+# DROP TABLE (CHECK)
+# TRUNCATE TABLE (CHECK)
 # ALTER TABLE (ADD COLUMN / DROP COLUMN / RENAME COLUMN / MODIFY COLUMN DATATYPE)
 
 import mysql.connector
@@ -117,6 +117,7 @@ def create_truncate_drop_table():
 
     print("\n")
 
+    print("Select Database...\n")
     database = select_database()
 
     db = mysql.connector.connect(
@@ -130,7 +131,34 @@ def create_truncate_drop_table():
 
     open_file = open(f'{rel_path}/queries/{action_re_txt}.sql', 'r')
     query_str = open_file.read()
-    format_query_str = query_str.format(table_name = select_table(database = database))
+
+    print("\n")
+
+    if action_re_txt == 'create_table':
+        table_name = input("Select Table Name: ")
+        columns_config = ''
+        while(True):
+            print("\n")
+            column_name = input("Select Column Name: ")
+            print("Select Column Type...\n")
+            print("Integer: Numeric exact value\n")
+            print("Float: Numeric approximate value with decimals\n")
+            print("Char(n): String value of 'n' characters\n")
+            print("Datetime: Date and time parts value\n\n")
+            column_data_type = select_terminal_menu_option(['INTEGER', 'FLOAT', 'CHAR(200)', 'DATETIME'])
+            
+            print("\n")
+            
+            add_more_columns_txt = select_terminal_menu_option(["Add Another Column", "Do Not Add More Columns"])
+
+            if add_more_columns_txt == "Do Not Add More Columns":
+                columns_config += f"{column_name} {column_data_type}"
+                break
+
+            columns_config += f"{column_name} {column_data_type},\n"
+        format_query_str = query_str.format(table_name = table_name, columns_config = columns_config)
+    else:
+        format_query_str = query_str.format(table_name = select_table(database = database))
 
     print("\n")
 
@@ -138,6 +166,6 @@ def create_truncate_drop_table():
 
     sleep(1)
 
-    #cursor.execute(format_query_str)
+    cursor.execute(format_query_str)
     
     return 200
