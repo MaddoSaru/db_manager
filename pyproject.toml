@@ -12,6 +12,7 @@ python-dotenv = "^1.0.0"
 simple-term-menu = "^1.6.1"
 polars = "^0.19.3"
 requests = "^2.31.0"
+black = "^23.9.1"
 
 
 [build-system]

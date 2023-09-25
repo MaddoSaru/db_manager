@@ -6,15 +6,14 @@ import logging
 
 
 def select_database() -> str:
-
-    db = mysql.connector.connect(** ddbb_config)
+    db = mysql.connector.connect(**ddbb_config)
 
     cursor = db.cursor()
 
-    open_file = open(f'utils/queries/show_databases.sql', 'r')
+    open_file = open(f"utils/queries/show_databases.sql", "r")
     query_str = open_file.read()
     cursor.execute(query_str)
-        
+
     ddbb_options = list(map(lambda x: (x)[0], cursor))
 
     db_name = select_terminal_menu_option(ddbb_options)
@@ -22,24 +21,17 @@ def select_database() -> str:
     return db_name
 
 
-def select_table(
-    database : str
-) -> str:
-
-    db = mysql.connector.connect(** 
-        add_config_database(
-            config = ddbb_config, 
-            key = "database", 
-            value = database
-        )
+def select_table(database: str) -> str:
+    db = mysql.connector.connect(
+        **add_config_database(config=ddbb_config, key="database", value=database)
     )
 
     cursor = db.cursor()
 
-    open_file = open(f'utils/queries/show_tables.sql', 'r')
+    open_file = open(f"utils/queries/show_tables.sql", "r")
     query_str = open_file.read()
     cursor.execute(query_str)
-        
+
     tables_options = list(map(lambda x: (x)[0], cursor))
 
     table_name = select_terminal_menu_option(tables_options)
@@ -47,45 +39,46 @@ def select_table(
     return table_name
 
 
-def show_tables_list(
-    database : str
-) -> List:
-    
-    db = mysql.connector.connect(** 
-        add_config_database(
-            config = ddbb_config, 
-            key = "database", 
-            value = database
-        )
+def show_tables_list(database: str) -> List:
+    db = mysql.connector.connect(
+        **add_config_database(config=ddbb_config, key="database", value=database)
     )
 
     cursor = db.cursor()
 
-    open_file = open(f'utils/queries/show_tables.sql', 'r')
+    open_file = open(f"utils/queries/show_tables.sql", "r")
     query_str = open_file.read()
     cursor.execute(query_str)
-        
+
     tables_options = list(map(lambda x: (x)[0], cursor))
 
     return tables_options
 
 
-def create_columns_config(
-    columns_structure : Optional[Dict] = None
-):
+def create_columns_config(columns_structure: Optional[Dict] = None):
     if columns_structure != None:
         logging.info("Creating Columns Config From Given Column Structure...")
         for column_name in columns_structure:
-            columns_config += f"{column_name} {columns_structure[column_name]}" if column_name == list(columns_structure) [-1] else f'{column_name} {columns_structure[column_name]},'
+            columns_config += (
+                f"{column_name} {columns_structure[column_name]}"
+                if column_name == list(columns_structure)[-1]
+                else f"{column_name} {columns_structure[column_name]},"
+            )
     else:
         logging.info("Create New Columns Config...")
-        columns_config = ''
-        while(True):
+        columns_config = ""
+        while True:
             column_name = input("Select Column Name: ")
-            logging.info("Select Column Type...\nInteger: Numeric exact value\nFloat: Numeric approximate value with decimals\nChar(n): String value of 'n' characters\nDatetime: Date and time parts value")
-            column_data_type = select_terminal_menu_option(['INTEGER', 'FLOAT', 'CHAR(200)', 'DATETIME'])
-            
-            add_more_columns_txt = select_terminal_menu_option(["Add Another Column", "Do Not Add More Columns"])
+            logging.info(
+                "Select Column Type...\nInteger: Numeric exact value\nFloat: Numeric approximate value with decimals\nChar(n): String value of 'n' characters\nDatetime: Date and time parts value"
+            )
+            column_data_type = select_terminal_menu_option(
+                ["INTEGER", "FLOAT", "CHAR(200)", "DATETIME"]
+            )
+
+            add_more_columns_txt = select_terminal_menu_option(
+                ["Add Another Column", "Do Not Add More Columns"]
+            )
 
             if add_more_columns_txt == "Do Not Add More Columns":
                 columns_config += f"{column_name} {column_data_type}"
@@ -95,24 +88,16 @@ def create_columns_config(
     return columns_config
 
 
-def table_describe_dict(
-    database : str,
-    table_name : str
-) -> Dict:
-    
-    db = mysql.connector.connect(** 
-        add_config_database(
-            config = ddbb_config, 
-            key = "database", 
-            value = database
-        )
+def table_describe_dict(database: str, table_name: str) -> Dict:
+    db = mysql.connector.connect(
+        **add_config_database(config=ddbb_config, key="database", value=database)
     )
 
     cursor = db.cursor()
 
-    open_file = open(f'utils/queries/describe_table.sql', 'r')
+    open_file = open(f"utils/queries/describe_table.sql", "r")
     query_str = open_file.read()
-    format_query_str = query_str.format(table_name = table_name)
+    format_query_str = query_str.format(table_name=table_name)
 
     cursor.execute(format_query_str)
 
