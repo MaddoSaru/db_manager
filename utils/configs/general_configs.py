@@ -23,13 +23,49 @@ requests_config = {
                 },
                 'aggregation' : {
                     'Daily Pair OHCLV' : {
-                        'endpoint' : 'histoday'
+                        'endpoint' : 'histoday',
+                        'columns_structure' : {
+                            'time' : 'INTEGER',
+                            'currency' : 'VARCHAR(255)',
+                            'high' : 'DOUBLE',
+                            'low' : 'DOUBLE',
+                            'open' : 'DOUBLE',
+                            'close' : 'DOUBLE',
+                            'volumefrom' : 'DOUBLE',
+                            'volumeto' : 'DOUBLE',
+                            'conversionType' : 'VARCHAR(255)',
+                            'conversionSymbol' : 'VARCHAR(255)'
+                        }
                     },
                     'Hourly Pair OHCLV' : {
-                        'endpoint' : 'histohour'
+                        'endpoint' : 'histohour',
+                        'columns_structure' : {
+                            'time' : 'INTEGER',
+                            'currency' : 'VARCHAR(255)',
+                            'high' : 'DOUBLE',
+                            'low' : 'DOUBLE',
+                            'open' : 'DOUBLE',
+                            'close' : 'DOUBLE',
+                            'volumefrom' : 'DOUBLE',
+                            'volumeto' : 'DOUBLE',
+                            'conversionType' : 'VARCHAR(255)',
+                            'conversionSymbol' : 'VARCHAR(255)'
+                        }
                     },
                     'Minute Pair OHCLV' : {
-                        'endpoint' : 'histominute'
+                        'endpoint' : 'histominute',
+                        'columns_structure' : {
+                            'time' : 'INTEGER',
+                            'currency' : 'VARCHAR(255)',
+                            'high' : 'DOUBLE',
+                            'low' : 'DOUBLE',
+                            'open' : 'DOUBLE',
+                            'close' : 'DOUBLE',
+                            'volumefrom' : 'DOUBLE',
+                            'volumeto' : 'DOUBLE',
+                            'conversionType' : 'VARCHAR(255)',
+                            'conversionSymbol' : 'VARCHAR(255)'
+                        }
                     },
                 }
             }

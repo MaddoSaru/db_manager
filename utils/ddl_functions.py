@@ -1,14 +1,18 @@
-# CREATE DATABASE (CHECK)
-# DROP DATABASE (CHECK)
-# CREATE TABLE (CHECK)
-# DROP TABLE (CHECK)
-# TRUNCATE TABLE (CHECK)
-# ALTER TABLE (ADD COLUMN / DROP COLUMN / RENAME COLUMN / MODIFY COLUMN DATATYPE)
+"""
+CREATE DATABASE (CHECK)
+DROP DATABASE (CHECK)
+CREATE TABLE (CHECK)
+DROP TABLE (CHECK)
+TRUNCATE TABLE (CHECK)
+ALTER TABLE (ADD COLUMN / DROP COLUMN / RENAME COLUMN / MODIFY COLUMN DATATYPE)
+"""
+
 
 import mysql.connector
 import logging
 from time import sleep
-from utils.general_db_functions import select_database, select_table
+from typing import Optional
+from utils.general_db_functions import select_database, select_table, create_columns_config
 from utils.general_functions import select_terminal_menu_option, add_config_database
 from utils.configs.general_configs import ddbb_config
 
@@ -18,8 +22,6 @@ def create_drop_database():
     action_re_txt = action_txt.replace(" ","_").lower()
 
     db = mysql.connector.connect(** ddbb_config)
-
-    sleep(1)
 
     cursor = db.cursor()
 
@@ -42,20 +44,26 @@ def create_drop_database():
 
     cursor.execute(format_query_str)
 
-    sleep(1)
-
     logging.info(successfull_msg)
     
     return 200
 
 
-def create_truncate_drop_table():
+def create_truncate_drop_table(
+    action_txt : Optional[str] = None,
+    database : Optional[str] = None,
+    table_name : Optional[str] = None,
+    columns_config : Optional[str] = None
+):
+    if action_txt == None:
+        action_txt = select_terminal_menu_option(["Create Table", "Truncate Table", "Drop Table"])
 
-    action_txt = select_terminal_menu_option(["Create Table", "Truncate Table", "Drop Table"])
     action_re_txt = action_txt.replace(" ","_").lower()
 
-    logging.info("Select Database...\n")
-    database = select_database()
+
+    if database == None:
+        logging.info("Select Database...\n")
+        database = select_database()
 
     db = mysql.connector.connect(** 
         add_config_database(
@@ -71,22 +79,11 @@ def create_truncate_drop_table():
     query_str = open_file.read()
 
     if action_re_txt == 'create_table':
-        table_name = input("Select Table Name: ")
+        if table_name == None:
+            table_name = input("Select Table Name: ")
         attempt_msg = f'Creating Table {table_name} In {database} Database'
-        columns_config = ''
-        while(True):
-            
-            column_name = input("Select Column Name: ")
-            logging.info("Select Column Type...\nInteger: Numeric exact value\nFloat: Numeric approximate value with decimals\nChar(n): String value of 'n' characters\nDatetime: Date and time parts value\n\n")
-            column_data_type = select_terminal_menu_option(['INTEGER', 'FLOAT', 'CHAR(200)', 'DATETIME'])   
-            
-            add_more_columns_txt = select_terminal_menu_option(["Add Another Column", "Do Not Add More Columns"])
-
-            if add_more_columns_txt == "Do Not Add More Columns":
-                columns_config += f"{column_name} {column_data_type}"
-                break
-
-            columns_config += f"{column_name} {column_data_type},\n"
+        if columns_config == None:
+            columns_config = create_columns_config()
         format_query_str = query_str.format(table_name = table_name, columns_config = columns_config)
     else:
         table_name = select_table(database = database)
@@ -101,8 +98,6 @@ def create_truncate_drop_table():
     logging.info(attempt_msg)
 
     cursor.execute(format_query_str)
-
-    sleep(1)
 
     logging.info(successfull_msg)
     
