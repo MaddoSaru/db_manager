@@ -79,9 +79,10 @@ def create_truncate_drop_table(
     query_str = open_file.read()
 
     if action_re_txt == "create_table":
+        attempt_msg = f"Creating Table {table_name} In {database} Database"
+        successfull_msg = f"Table {table_name} Created Successfully"
         if table_name == None:
             table_name = input("Select Table Name: ")
-        attempt_msg = f"Creating Table {table_name} In {database} Database"
         if columns_config == None:
             columns_config = create_columns_config()
         format_query_str = query_str.format(
