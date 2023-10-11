@@ -26,23 +26,24 @@ def add_config_database(
     return config
 
 
-def make_request() -> pl.DataFrame:
+def make_request() -> (str, str, pl.DataFrame):
     api_site = select_terminal_menu_option(
         list(map(lambda x: x, requests_config.keys()))
     )
     data_request_type = select_terminal_menu_option(
         list(map(lambda x: x, requests_config[api_site]["data_type_request"].keys()))
     )
-    aggregation_type = select_terminal_menu_option(
-        list(
-            map(
-                lambda x: x,
-                requests_config[api_site]["data_type_request"][data_request_type][
-                    "aggregation"
-                ].keys(),
+    if api_site == "cryptocompare":
+        aggregation_type = select_terminal_menu_option(
+            list(
+                map(
+                    lambda x: x,
+                    requests_config[api_site]["data_type_request"][data_request_type][
+                        "aggregation"
+                    ].keys(),
+                )
             )
         )
-    )
 
     variables_dict = requests_config[api_site]["data_type_request"][data_request_type][
         "variables"
@@ -53,7 +54,7 @@ def make_request() -> pl.DataFrame:
         if variable == "endpoint":
             variables[variable] = requests_config[api_site]["data_type_request"][
                 data_request_type
-            ]["aggregation"][aggregation_type][variable]
+            ]["aggregation"][aggregation_type]["endpoint"]
             logging.info(f"{camel(variable)} value: {variables[variable]}")
         else:
             if variables_dict[variable] == "manual_input":
@@ -70,7 +71,14 @@ def make_request() -> pl.DataFrame:
         "url"
     ].format(**variables)
 
-    request = requests.get(url=url).json()["Data"]["Data"]
+    columns_structure = requests_config[api_site]["data_type_request"][data_request_type]["columns_structure"]
+
+    request = requests.get(url=url).json()["Data"]["Data"] if requests_config[api_site]["data_type_request"][data_request_type]["request_data_structure"] == "Data/Data" else  requests.get(url=url).json()["data"]
+
     output_pl_df = pl.DataFrame(request)
 
-    return output_pl_df
+    for column in output_pl_df.columns:
+        if column not in columns_structure.keys():
+            output_pl_df = output_pl_df.drop(column)
+
+    return api_site, data_request_type, output_pl_df

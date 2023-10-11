@@ -100,6 +100,8 @@ def create_truncate_drop_table(
 
     logging.info(attempt_msg)
 
+    logging.info(format_query_str)
+
     cursor.execute(format_query_str)
 
     logging.info(successfull_msg)

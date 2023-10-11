@@ -22,7 +22,7 @@ def main():
         elif app_action == "Create Truncate or Drop Table":
             create_truncate_drop_table()
         elif app_action == "Insert Update or Delete Table Registers":
-            print(insert_update_delete_registers())
+            insert_update_delete_registers()
         elif app_action == "Exit":
             break
     logging.info("Thanks for using MaddoSaru DB Manager App uwu!\n")

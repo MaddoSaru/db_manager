@@ -56,17 +56,17 @@ def show_tables_list(database: str) -> List:
 
 
 def create_columns_config(columns_structure: Optional[Dict] = None):
+    columns_config = ""
     if columns_structure != None:
         logging.info("Creating Columns Config From Given Column Structure...")
         for column_name in columns_structure:
             columns_config += (
-                f"{column_name} {columns_structure[column_name]}"
+                f"`{column_name}` {columns_structure[column_name]}"
                 if column_name == list(columns_structure)[-1]
-                else f"{column_name} {columns_structure[column_name]},"
+                else f"`{column_name}` {columns_structure[column_name]},"
             )
     else:
         logging.info("Create New Columns Config...")
-        columns_config = ""
         while True:
             column_name = input("Select Column Name: ")
             logging.info(
@@ -81,10 +81,10 @@ def create_columns_config(columns_structure: Optional[Dict] = None):
             )
 
             if add_more_columns_txt == "Do Not Add More Columns":
-                columns_config += f"{column_name} {column_data_type}"
+                columns_config += f"`{column_name}` {column_data_type}"
                 break
 
-            columns_config += f"{column_name} {column_data_type},\n"
+            columns_config += f"`{column_name}` {column_data_type},\n"
     return columns_config
 
 
